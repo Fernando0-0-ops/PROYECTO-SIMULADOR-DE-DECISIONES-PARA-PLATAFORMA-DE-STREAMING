@@ -163,4 +163,4 @@ switch (opcion)
     case 5:
         //  No hay mensaje de salida ni cierre
         break;
-}
+}//
