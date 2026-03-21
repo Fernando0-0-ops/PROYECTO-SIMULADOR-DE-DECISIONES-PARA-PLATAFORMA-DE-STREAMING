@@ -1,166 +1,167 @@
-﻿//  Falta declarar una clase y el método Main para que el programa funcione correctamente
-
+﻿//segundos errores
 Console.WriteLine("Sistema de cajero automatico simulado");
 
-//  El sistema no está en un ciclo, solo se ejecuta una vez
-
-//mostar menu
-Console.WriteLine("1. Evaluar contenido");
-Console.WriteLine("2. Mostrar reglas del sistema");
-Console.WriteLine("3. Mostrar estadisticas de la sesion");
-Console.WriteLine("4. Reiniciar estadisticas");
-Console.WriteLine("5. Salir");
-
-Console.WriteLine("Ingrese una opcion:");
-int opcion = int.Parse(Console.ReadLine()); //  Puede fallar si el usuario ingresa texto
-
-int evaluados = 0;
-int rechazados = 0;
-int publicados = 0;
-
-switch (opcion)
+do
 {
-    case 1:
-        Console.WriteLine("Ingrese que tipo de contenido es: ");
-        string contenido = Console.ReadLine();
+    //mostar menu
+    Console.WriteLine("1. Evaluar contenido");
+    Console.WriteLine("2. Mostrar reglas del sistema");
+    Console.WriteLine("3. Mostrar estadisticas de la sesion");
+    Console.WriteLine("4. Reiniciar estadisticas");
+    Console.WriteLine("5. Salir");
 
-        Console.WriteLine("Ingrese la duración en MINUTOS: ");
-        int duracion = int.Parse(Console.ReadLine()); //  Sin validación
+    Console.WriteLine("Ingrese una opcion:");
+    int opcion = int.Parse(Console.ReadLine()); // ❌ Puede fallar si el usuario ingresa texto
 
-        Console.WriteLine("Ingrese a que clasificación pertenece: ");
-        string clasificacion = Console.ReadLine();
+    //  Estas variables se reinician en cada vuelta del ciclo (pierdes las estadísticas)
+    int evaluados = 0;
+    int rechazados = 0;
+    int publicados = 0;
 
-        Console.WriteLine("Ingrese el horario deseado (entre 0 y 23): ");
-        double horario = double.Parse(Console.ReadLine()); //  Debería ser int
+    switch (opcion)
+    {
+        case 1:
+            Console.WriteLine("Ingrese que tipo de contenido es: ");
+            string contenido = Console.ReadLine();
 
-        Console.WriteLine("¿Nivel de producción?");
-        string produccion = Console.ReadLine();
+            Console.WriteLine("Ingrese la duración en MINUTOS: ");
+            int duracion = int.Parse(Console.ReadLine()); // ❌ Sin validación
 
+            Console.WriteLine("Ingrese a que clasificación pertenece: ");
+            string clasificacion = Console.ReadLine();
 
-        //Regla 1
-        void Regla1()
-        {
-            //  Comparaciones con espacios incorrectos
-            if (clasificacion == "Todo publico")
-            {
-                Regla2();
-            }
-            else if (clasificacion == " +13 ") //  Espacios incorrectos
-            {
-                Regla2();
-            }
-            else if (clasificacion == " +18 ") //  Espacios incorrectos
-            {
-                Regla2();
-            }
-            else
-            {
-                Console.WriteLine("Rechazado");
-                rechazados++;
-            }
-        }
+            Console.WriteLine("Ingrese el horario deseado (entre 0 y 23): ");
+            int horario = int.Parse(Console.ReadLine()); // ❌ No validas rango (0–23)
 
+            Console.WriteLine("¿Nivel de producción?");
+            string produccion = Console.ReadLine();
 
-        //Regla 2
-        void Regla2()
-        {
-            //  Condiciones repetidas y confusas (se solapan entre sí)
-            if (duracion > 60 && duracion <= 180)
-            {
-                Regla3();
-            }
-            else if (duracion > 20 && duracion <= 90)
-            {
-                Regla3();
-            }
-            else if (duracion > 30 && duracion <= 120)
-            {
-                Regla3();
-            }
-            else if (duracion > 30 && duracion <= 240)
-            {
-                Regla3();
-            }
-            else
-            {
-                Console.WriteLine("Rechazado");
-                rechazados++;
-            }
+            evaluados++;
 
-
-            //  Función anidada (hace el código difícil de entender)
-            void Regla3()
+            //Regla 1
+            void Regla1()
             {
-                if (produccion == "bajo" && clasificacion == "+18") //  Inconsistencia con espacios en "+18"
+                if (clasificacion == "Todo publico")
                 {
-                    Console.WriteLine("Decisión: RECHAZAR");
-                    Console.WriteLine("Motivo: la producción baja no es permitida para clasificación +18");
+                    Regla2();
+                }
+                //  Tiene espacios incorrectos → nunca coincidirá correctamente
+                else if (clasificacion == " +13 " && horario >= 6 && horario <= 22)
+                {
+                    Regla2();
+                }
+                else if (clasificacion == "+18" && (horario >= 22 || horario <= 5))
+                {
+                    Regla2();
                 }
                 else
                 {
-                    //  Regla33 no hace nada
-                    Regla33();
+                    Console.WriteLine("Rechazado");
+                    Console.WriteLine("Motivo: horario no permitido para la clasificación");
+                    rechazados++;
                 }
             }
 
-            void Regla33()
+            //Regla 2
+            void Regla2()
             {
-                //  Función vacía (no tiene utilidad)
+                //  Comparaciones sensibles a mayúsculas (pelicula vs Pelicula)
+                if (contenido == "pelicula" && duracion > 60 && duracion <= 180)
+                {
+                    Regla3();
+                }
+                else if (contenido == "serie" && duracion > 20 && duracion <= 90)
+                {
+                    Regla3();
+                }
+                else if (contenido == "documental" && duracion > 30 && duracion <= 120)
+                {
+                    Regla3();
+                }
+                else if (contenido == "evento" && duracion > 30 && duracion <= 240)
+                {
+                    Regla3();
+                }
+                else
+                {
+                    Console.WriteLine("Rechazado");
+                    Console.WriteLine("Motivo: duración fuera del rango permitido");
+                    rechazados++;
+                }
+
+                //Regla 3
+                void Regla3()
+                {
+                    //  Inconsistencia de texto "+18" vs lo que el usuario puede escribir
+                    if (produccion == "bajo" && clasificacion == "+18")
+                    {
+                        Console.WriteLine("Rechazado");
+                        Console.WriteLine("Motivo: la producción baja no es permitida para clasificación +18");
+                        rechazados++;
+                    }
+                    else
+                    {
+                        impacto();
+                        decision_final(); //  Esta función está fuera de Regla2 (confuso)
+                    }
+                }
+
+                //Impacto 
+                void impacto()
+                {
+                    //  Uso de OR (||) puede dar resultados incorrectos
+                    if (produccion == "alto" || duracion > 120 || (horario >= 20 && horario <= 23))
+                    {
+                        Console.WriteLine("Impacto: ALTO ");
+                    }
+                    else if (produccion == "medio" || (duracion > 60 && duracion <= 120))
+                    {
+                        Console.WriteLine("Impacto: MEDIO ");
+                    }
+                    else if (produccion == "bajo" && duracion < 60)
+                    {
+                        Console.WriteLine("Impacto: BAJO ");
+                    }
+                }
             }
 
-            void impacto()
-            {
-                // No se llama nunca esta función
-                if (produccion == "alto" || duracion > 120 || (horario >= 20 && horario <= 23))
-                {
-                    Console.WriteLine("Impacto: ALTO ");
-                }
-                else if (produccion == "medio" || (duracion > 60 && duracion <= 120))
-                {
-                    Console.WriteLine("Impacto: MEDIO ");
-                }
-                else if (produccion == "bajo" && duracion < 60)
-                {
-                    Console.WriteLine("Impacto: BAJO ");
-                }
-            }
-
+            //Decisión final
             void decision_final()
             {
-                //  Problema de mayúsculas/minúsculas ("Bajo" vs "bajo")
+                //  Problema de mayúsculas ("Bajo" vs "bajo")
                 if (produccion == "Bajo" || produccion == "Medio")
                 {
-                    Console.WriteLine("Publicar");
+                    Console.WriteLine("Decisión final: Publicar");
+                    publicados++;
                 }
-                if (produccion == "Alto")
+                else if (produccion == "Alto")
                 {
-                    Console.WriteLine("Enviar a revisión");
+                    Console.WriteLine("Decision final: Enviar a revisión");
                 }
-                else
-                {
-                    //  Este else solo pertenece al segundo if, no al primero
-                    Console.WriteLine("Rechazar");
-                }
+                //  Falta un else para cubrir otros casos (rechazo)
             }
-        }
 
-        //  Nunca se llama a Regla1(), por lo tanto nada de la lógica se ejecuta
+            Regla1(); // ✅ Bien, aquí sí llamas la función
 
-        break;
+            break;
 
-    case 2:
-        //  No hay implementación
-        break;
+        case 2:
+            //  No implementado
+            break;
 
-    case 3:
-        //  No hay implementación
-        break;
+        case 3:
+            //  No muestra estadísticas aunque tienes variables
+            break;
 
-    case 4:
-        //  No hay implementación
-        break;
+        case 4:
+            //  No reinicia estadísticas realmente
+            break;
 
-    case 5:
-        //  No hay mensaje de salida ni cierre
-        break;
-}//
+        case 5:
+            //  No muestra mensaje de salida
+            break;
+    }
+
+    //  ERROR GRAVE: opcion está fuera de alcance aquí (scope)
+    // porque fue declarada dentro del do {}
+} while (opcion != 5);
