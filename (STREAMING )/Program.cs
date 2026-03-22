@@ -1,6 +1,4 @@
-﻿
-
-Console.WriteLine("Sistema de evaluacion de contenido de streaming");
+﻿Console.WriteLine("Sistema de evaluacion de contenido de streaming");
 
 int opcion;
 
@@ -46,120 +44,107 @@ do
 
             evaluados++;
 
-            //////////////////Regla 1///////////////////////////////////////////////
-
-            if (clasificacion == "Todo publico")
-            {
-
-            }
-            else if (clasificacion == "+13" && (horario < 6 || horario > 22))
+            // REGLA 1
+            if (clasificacion == "+13" && (horario < 6 || horario > 22))
             {
                 Console.WriteLine("Decisión: Rechazado");
-                Console.WriteLine("Motivo: +13 solo se permite entre 6 y 22 horas");
                 rechazados++;
                 break;
             }
             else if (clasificacion == "+18" && !(horario >= 22 || horario <= 5))
             {
                 Console.WriteLine("Decisión: Rechazado");
-                Console.WriteLine("Motivo: +18 solo se permite entre 22 y 5 horas");
                 rechazados++;
                 break;
             }
 
-            //////////////////Regla 2///////////////////////////////////////////////
+            // REGLA 2
             if (contenido == "pelicula" && !(duracion >= 60 && duracion <= 180))
             {
-                Console.WriteLine("Decisión: Rechazado");
-                Console.WriteLine("Motivo: duración invalida para pelicula ");
+                Console.WriteLine("Rechazado");
                 rechazados++;
                 break;
             }
             else if (contenido == "serie" && !(duracion >= 20 && duracion <= 90))
             {
-                Console.WriteLine("Decisión: Rechazado");
-                Console.WriteLine("Motivo: duración invalida para serie ");
+                Console.WriteLine("Rechazado");
                 rechazados++;
                 break;
             }
             else if (contenido == "documental" && !(duracion >= 30 && duracion <= 120))
             {
-                Console.WriteLine("Decisión: Rechazado");
-                Console.WriteLine("Motivo: duración invalida para documental");
+                Console.WriteLine("Rechazado");
                 rechazados++;
                 break;
             }
             else if (contenido == "evento" && !(duracion >= 30 && duracion <= 240))
             {
-                Console.WriteLine("Decisión: Rechazado");
-                Console.WriteLine("Motivo: duración invalida para evento en vivo ");
+                Console.WriteLine("Rechazado");
                 rechazados++;
                 break;
             }
 
-            //////////////////Regla 3///////////////////////////////////////////////
-
+            // REGLA 3
             if (produccion == "bajo" && clasificacion == "+18")
             {
-                Console.WriteLine("Decisión: Rechazado");
-                Console.WriteLine("Motivo: la producción baja no es permitida para clasificación +18");
+                Console.WriteLine("Rechazado");
                 rechazados++;
                 break;
             }
 
-            //Impacto ///////////////////////////////////////////////////////
+            // IMPACTO
             string impacto = "";
 
             if (produccion == "alto" || duracion > 120 || (horario >= 20 && horario <= 23))
-            {
                 impacto = "ALTO";
-            }
             else if (produccion == "medio" || (duracion >= 60 && duracion <= 120))
-            {
                 impacto = "MEDIO";
-            }
             else
-            {
                 impacto = "BAJO";
-            }
 
             Console.WriteLine("Impacto detectado: " + impacto);
 
-            //Decisión final//////////////////////////////////////////////
-
+            // DECISION
             if (impacto == "BAJO" || impacto == "MEDIO")
             {
-                Console.WriteLine("Decisión final: Publicar");
+                Console.WriteLine("Publicar");
                 publicados++;
             }
-            else if (impacto == "ALTO")
+            else
             {
-                Console.WriteLine("Decision final: Enviar a revisión");
+                Console.WriteLine("Enviar a revision"); // pequeño detalle
             }
 
             break;
 
         case 2:
-            Console.WriteLine("= Reglas del sistema =");
+            Console.WriteLine("===== REGLAS =====");
 
-            Console.WriteLine("\nClasificación y horario:");
             Console.WriteLine("Todo público: cualquier hora");
-            Console.WriteLine("+13: entre 6 y 22 horas");
-            Console.WriteLine("+18: entre 22 y 5 horas");
+            Console.WriteLine("+13: 6 a 22");
+            Console.WriteLine("+18: 22 a 5");
 
-            Console.WriteLine("\nDuración por tipo:");
-            Console.WriteLine("Película: 60–180 minutos");
-            Console.WriteLine("Serie: 20–90 minutos");
-            Console.WriteLine("Documental: 30–120 minutos");
-            Console.WriteLine("Evento en vivo: 30–240 minutos");
+            Console.WriteLine("Película: 60–180");
+            Console.WriteLine("Serie: 20–90");
+            Console.WriteLine("Documental: 30–120");
+            Console.WriteLine("Evento: 30–240");
 
-            Console.WriteLine("\nProducción:");
-            Console.WriteLine("Producción baja: solo Todo público o +13");
-            Console.WriteLine("Producción media o alta: cualquier clasificación");
+            Console.WriteLine("Producción baja: no en +18");
 
             break;
 
         case 3:
+            Console.WriteLine("===== ESTADISTICAS =====");
+            Console.WriteLine("Evaluados: " + evaluados);
+            Console.WriteLine("Publicados: " + publicados);
+            Console.WriteLine("Rechazados: " + rechazados);
+
+            // ERROR REALISTA: división entera
+            double porcentaje = publicados / evaluados * 100;
+            Console.WriteLine("Porcentaje de aprobacion: " + porcentaje);
+
+            // ERROR: no valida si evaluados es 0 (puede crashear)
+
             break;
 
         case 4:
