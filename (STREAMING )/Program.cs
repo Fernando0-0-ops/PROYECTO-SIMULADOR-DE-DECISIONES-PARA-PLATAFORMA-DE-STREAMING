@@ -1,13 +1,16 @@
 ﻿Console.WriteLine("Sistema de evaluacion de contenido de streaming");
 
+// variable para controlar el menu
 int opcion;
 
+// contadores de la sesion
 int evaluados = 0;
 int rechazados = 0;
 int publicados = 0;
 
 do
 {
+    // menu principal
     Console.WriteLine("\n1. Evaluar contenido");
     Console.WriteLine("2. Mostrar reglas del sistema");
     Console.WriteLine("3. Mostrar estadisticas de la sesion");
@@ -20,6 +23,7 @@ do
     switch (opcion)
     {
         case 1:
+            // aqui se piden los datos del contenido
             Console.Write("Tipo de contenido: ");
             string contenido = Console.ReadLine().ToLower();
 
@@ -32,6 +36,7 @@ do
             Console.Write("Horario (0-23): ");
             int horario = int.Parse(Console.ReadLine());
 
+            // validacion para que el horario sea correcto
             while (horario < 0 || horario > 23)
             {
                 Console.Write("Horario inválido, ingrese nuevamente: ");
@@ -41,9 +46,11 @@ do
             Console.Write("Nivel de producción: ");
             string produccion = Console.ReadLine().ToLower();
 
+            // se aumenta el contador de evaluados
             evaluados++;
 
-            // REGLA 1
+            // ******************** REGLA  ********************
+            // validacion de clasificacion con horario
             if (clasificacion == "+13" && (horario < 6 || horario > 22))
             {
                 Console.WriteLine("Rechazado");
@@ -58,9 +65,10 @@ do
                 break;
             }
 
-            // "todo publico" pasa sin restricciones
+            // todo publico pasa sin problema
 
-            // REGLA 2
+            // ******************** REGLA 2 ********************
+            // validacion de duracion segun el tipo
             if (contenido == "pelicula" && !(duracion >= 60 && duracion <= 180))
             {
                 Console.WriteLine("Rechazado");
@@ -89,7 +97,8 @@ do
                 break;
             }
 
-            // REGLA 3
+            // ****************** REGLA 3 ********************
+            // no se permite produccion baja en +18
             if (produccion == "bajo" && clasificacion == "+18")
             {
                 Console.WriteLine("Rechazado");
@@ -97,7 +106,8 @@ do
                 break;
             }
 
-            // IMPACTO
+            // ******************* IMPACTO *****************
+            // aqui se calcula el impacto del contenido
             string impacto;
 
             if (produccion == "alto" || duracion > 120 || (horario >= 20 && horario <= 23))
@@ -109,7 +119,8 @@ do
 
             Console.WriteLine("Impacto: " + impacto);
 
-            // DECISION FINAL
+            // *************** DECISION FINAL ********************
+            // dependiendo del impacto se decide que hacer
             if (impacto == "BAJO" || impacto == "MEDIO")
             {
                 Console.WriteLine("Publicar");
@@ -123,6 +134,7 @@ do
             break;
 
         case 2:
+            // muestra las reglas del sistema
             Console.WriteLine("\n=== REGLAS ===");
             Console.WriteLine("Todo público: cualquier horario");
             Console.WriteLine("+13: de 6 a 22");
@@ -137,11 +149,13 @@ do
             break;
 
         case 3:
+            // muestra las estadisticas actuales
             Console.WriteLine("\n=== ESTADISTICAS ===");
             Console.WriteLine("Evaluados: " + evaluados);
             Console.WriteLine("Publicados: " + publicados);
             Console.WriteLine("Rechazados: " + rechazados);
 
+            // se calcula el porcentaje si hay datos
             if (evaluados > 0)
             {
                 double porcentaje = (double)publicados / evaluados * 100;
@@ -154,6 +168,7 @@ do
             break;
 
         case 4:
+            // reinicia todos los contadores
             evaluados = 0;
             rechazados = 0;
             publicados = 0;
@@ -162,10 +177,12 @@ do
             break;
 
         case 5:
+            // salida del programa
             Console.WriteLine("Saliendo del sistema...");
             break;
 
         default:
+            // opcion incorrecta
             Console.WriteLine("Opción inválida");
             break;
     }
